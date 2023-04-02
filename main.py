@@ -217,6 +217,18 @@ app = customtkinter.CTk()
 app.geometry("400x900")
 app.title("Control Systems: Electric Motor")
 
+# check to see if octave has package control installed
+try:
+    output = subprocess.check_output(['octave', '-q', '--eval', "pkg list"])
+except subprocess.CalledProcessError as e:
+    output = e.output
+    create_error_window(output.decode("utf-8"))
+
+if output.decode("utf-8").find("control") == -1:
+    print("Octave package control not installed, please install it.")
+    create_error_window("Octave package control not installed, please install it.")
+    exit(1)
+
 # make minimal window size
 app.minsize(400, 900)
 
