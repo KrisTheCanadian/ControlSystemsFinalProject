@@ -84,7 +84,7 @@ def render_type(graph_type: str = "Step"):
 def create_error_window(message: str):
     error_window = tk.Toplevel()
     error_window.title("Error")
-    error_window.geometry("300x300")
+    error_window.geometry("800x600")
     error_window.resizable(False, False)
     error_window.configure(bg="#2c2f33")
 
@@ -119,17 +119,20 @@ def execute_octave_code(octave_code: str, file_name: str):
         os.makedirs(output_dir)
 
     os.chdir(output_dir)
+
     try:
         output = subprocess.check_output(['octave', '-q', '--eval', octave_code])
+
+        # check if output finished successfully
+        if output.decode("utf-8").find("error") != -1:
+            print("Error while running octave, please make sure octave is installed and in your PATH variable.")
+            return
+
     except subprocess.CalledProcessError as e:
         output = e.output
         create_error_window(output.decode("utf-8"))
-    os.chdir("..")
 
-    # check if output finished successfully
-    if output.decode("utf-8").find("error") != -1:
-        print("Error while running octave, please make sure octave is installed and in your PATH variable.")
-        return
+    os.chdir("..")
 
     print("File saved to:", os.path.join(output_dir, file_name))
 
@@ -224,10 +227,14 @@ except subprocess.CalledProcessError as e:
     output = e.output
     create_error_window(output.decode("utf-8"))
 
-if output.decode("utf-8").find("control") == -1:
-    print("Octave package control not installed, please install it.")
-    create_error_window("Octave package control not installed, please install it.")
-    exit(1)
+    if output.decode("utf-8").find("control") == -1:
+        print("Octave package control not installed, please install it.")
+        create_error_window("Octave package control not installed, please install it.")
+        exit(1)
+
+except FileNotFoundError as e:
+    create_error_window("Octave not found, please make sure octave is installed and in your PATH variable. "
+                        "\n Please see the Readme for more information.")
 
 # make minimal window size
 app.minsize(400, 900)
