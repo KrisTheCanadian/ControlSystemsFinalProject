@@ -84,7 +84,7 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 
 app = customtkinter.CTk()
 app.geometry("400x500")
-app.title("CustomTkinter simple_example.py")
+app.title("Control Systems: Electric Motor")
 
 # make minimal window size
 app.minsize(400, 500)
