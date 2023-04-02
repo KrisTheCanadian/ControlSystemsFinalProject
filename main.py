@@ -30,10 +30,24 @@ def slider3_callback(value):
     print(value)
     label_3.configure(text=f"k_e: {value:.2f}")
 
-
 def slider4_callback(value):
     print(value)
     label_4.configure(text=f"k_t: {value:.2f}")
+
+
+def slider_z_callback(value):
+    print(value)
+    label_z.configure(text=f"z: {value:.2f}")
+
+
+def slider_p_callback(value):
+    print(value)
+    label_p.configure(text=f"p: {value:.2f}")
+
+
+def slider_k_callback(value):
+    print(value)
+    label_k.configure(text=f"k: {value:.2f}")
 
 
 def render():
@@ -60,8 +74,8 @@ def render():
                   "clf;\n" \
                   "s = tf('s');\n" \
                   "g = " + numerator + "/(" + denominator + ");\n" \
-                                                            "step(g);\n" \
-                                                            "print -dsvg step.svg\n"
+                  "step(g);\n" \
+                  "print -dsvg step.svg\n"
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -83,14 +97,19 @@ customtkinter.set_appearance_mode("dark")  # Modes: "System" (standard), "Dark",
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 app = customtkinter.CTk()
-app.geometry("400x500")
+app.geometry("400x860")
 app.title("Control Systems: Electric Motor")
 
 # make minimal window size
-app.minsize(400, 500)
+app.minsize(400, 860)
 
 frame_1 = customtkinter.CTkFrame(master=app)
 frame_1.pack(pady=20, padx=10, fill="both", expand=True)
+
+
+# create a label for the frame
+label = customtkinter.CTkLabel(master=frame_1, text="Motor Parameters", justify=customtkinter.LEFT)
+label.pack(pady=10, padx=10)
 
 from_1: float = 1
 to_1: float = 1.5
@@ -120,8 +139,45 @@ var_4.set(from_4)
 label_4, slider_4 = create_slider_and_label(frame_1, "k_t: " + str(var_4.get()), var_4, slider4_callback, from_4,
                                             to_4)
 
+# extra sliders for the controller
+
+# label for the controller parameters
+label = customtkinter.CTkLabel(master=frame_1, text="Controller Parameters", justify=customtkinter.LEFT)
+label.pack(pady=10, padx=10)
+
+# z parameter
+from_z: float = 0
+to_z: float = 100
+var_z = tk.DoubleVar()
+var_z.set(from_z)
+label_z, slider_z = create_slider_and_label(frame_1, "z: " + str(var_z.get()), var_z, slider_z_callback, from_z,
+                                            to_z)
+
+# p parameter
+from_p: float = 0
+to_p: float = 100
+var_p = tk.DoubleVar()
+var_p.set(from_p)
+label_p, slider_p = create_slider_and_label(frame_1, "p: " + str(var_p.get()), var_p, slider_p_callback, from_p,
+                                            to_p)
+
+# k parameter
+from_k: float = 0
+to_k: float = 100
+var_k = tk.DoubleVar()
+var_k.set(from_k)
+label_k, slider_k = create_slider_and_label(frame_1, "k: " + str(var_k.get()), var_k, slider_k_callback, from_k,
+                                            to_k)
+
+
+# impulse, step, root locus to render
+# show poles for controller tf = G * G_ctrl / (1 + G * G_ctrl) by applying poles command -> closed loop system
+
+
 # create a button
 button = customtkinter.CTkButton(master=app, text="Render", command=render)
 button.pack(pady=20, padx=10)
+
+
 
 app.mainloop()
